@@ -161,8 +161,23 @@ for i in range(len(lrs)):
 
 idx = np.argsort(accuracies, axis=0)
 plt.figure(1)
-plt.plot(sizes, lrs[idx[len(lrs)-1,:]], label="best learning rate for each hidden layer size")
+plt.plot(sizes, [lrs[i] for i in idx[-1,:]], label="best learning rate for each hidden layer size")
 plt.figure(2)
-plt.plot(sizes, np.amax(accuracies, axis=0), label="corresponding accuracies")
+plt.plot(sizes, [accuracies[idx[-1,i],i] for i in range(len(sizes))], label="corresponding accuracies")
 plt.show()
 
+#%% NN test for higher hidden layer sizes (from 200 to 400)
+lrs = [(2**n)*0.0001 for n in range(11)]
+sizes = [(200+10*n,) for n in range(20)]
+accuracies=np.zeros((len(lrs), len(sizes)))
+
+for i in range(len(lrs)):
+    for j in range(len(sizes)):
+        accuracies[i,j]=NN(hl_sizes=sizes[j], lr=lrs[i])
+
+idx = np.argsort(accuracies, axis=0)
+plt.figure(1)
+plt.plot(sizes, [lrs[i] for i in idx[-1,:]], label="best learning rate for each hidden layer size")
+plt.figure(2)
+plt.plot(sizes, [accuracies[idx[-1,i],i] for i in range(len(sizes))], label="corresponding accuracies")
+plt.show()
