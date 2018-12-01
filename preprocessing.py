@@ -16,7 +16,8 @@ def ChangeEmbarked (data):
 def ChangeName (data):
     l=[s for l in data['Name'].str.split(' ') for s in l if ('.' in s and 'L.' not in s)]
     data['Name']=l
-    for i in range(1,data['Name'].size+1):
+    n = data.index.values[0]
+    for i in range(n, data['Name'].size+n):
         for j in range(len(l)):        
             if(l[j]==data.at[i,'Name']):
                 data.at[i,'Name']=j
@@ -25,11 +26,16 @@ def missingAges(data):
     mean = round(data['Age'].mean(),1)
     data.loc[data['Age'].isnull(), 'Age'] = mean
 
+def fareNaN(data):
+    if data.isna().any()['Fare']:
+        data.loc[data['Fare'].isnull(), 'Fare'] = round(data['Fare'].mean(),1)
+    
 def preprocess(data):
     data.drop(['Ticket','Cabin'], axis=1, inplace=True)
     changeGender(data)
     ChangeEmbarked(data)
     ChangeName(data)
     missingAges(data)
+    fareNaN(data)
     print(data.head())
     return (preprocessing.scale(data.values))
