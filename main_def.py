@@ -4,7 +4,9 @@ from sklearn import model_selection
 import csv
 from classify import classify
 import preprocessing as prep
+import preprocessing_features as prep_features
 import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
 
 
 def load_data(file="Data/train.csv"):
@@ -63,5 +65,29 @@ class Classifier:
             total_instances += test_labels.size
         print('Total Accuracy: ' + str(total_correct / float(total_instances)))
 
-    def preprocessing(self):
-        self.x, self.x_header = prep.preprocess(self.x, self.x_header)
+    def preprocessing_features(self):
+        self.x, self.x_header = prep_features.preprocess(self.x, self.x_header)
+
+    def decision_tree(self, D):
+        total_instances = 0  # Variable that will store the total intances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted intances
+        clf = DecisionTreeClassifier(max_depth=D)
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+
+            clf.fit(train_set, train_labels)
+            predicted_labels = clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print('Total Accuracy: ' + str(accuracy))
+        return accuracy
