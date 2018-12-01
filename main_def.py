@@ -7,6 +7,8 @@ import preprocessing as prep
 import preprocessing_features as prep_features
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.neural_network import MLPClassifier
 
 
 def load_data(file="Data/train.csv"):
@@ -72,6 +74,57 @@ class Classifier:
         total_instances = 0  # Variable that will store the total intances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted intances
         clf = DecisionTreeClassifier(max_depth=D)
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+
+            clf.fit(train_set, train_labels)
+            predicted_labels = clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print('Total Accuracy: ' + str(accuracy))
+        return accuracy
+
+    def ada_boost(self, D):
+        total_instances = 0  # Variable that will store the total intances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted intances
+        clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=D))
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+
+            clf.fit(train_set, train_labels)
+            predicted_labels = clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print('Total Accuracy: ' + str(accuracy))
+        return accuracy
+
+    def NN(self, hl_sizes=(100,), activation='relu', solver='sgd', lr=0.01, lr_evol='constant', max_iter=200, tol=0.001,
+           early_stopping=True, validation_fraction=0.1, n_iter_no_change=5):
+        total_instances = 0  # Variable that will store the total intances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted intances
+        clf = MLPClassifier(hidden_layer_sizes=hl_sizes, activation=activation, solver=solver, learning_rate_init=lr,
+                            learning_rate=lr_evol, max_iter=max_iter, tol=tol, early_stopping=early_stopping,
+                            validation_fraction=validation_fraction, n_iter_no_change=n_iter_no_change)
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
