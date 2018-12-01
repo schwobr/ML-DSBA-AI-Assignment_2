@@ -85,7 +85,7 @@ def test_NN_1():
         print(e)
 
 
-test_NN_1()
+#  test_NN_1()
 
 
 def test_NN_2():
@@ -113,4 +113,4 @@ def test_NN_2():
     except KeyboardInterrupt as e:
         print(e)
 
-test_NN_2()
+#  test_NN_2()
