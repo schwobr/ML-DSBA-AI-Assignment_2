@@ -110,8 +110,8 @@ class Classifier:
     def preprocessing_features(self):
         self.x, self.x_header = prep_features.preprocess(self.x, self.x_header)
 
-    def preprocessing(self):
-        self.x = prep.preprocess(self.data)
+    def preprocessing(self, change_ages = False):
+        self.x = prep.preprocess(self.data, change_ages)
 
     def decision_tree(self, D):
         total_instances = 0  # Variable that will store the total instances that will be tested
@@ -259,8 +259,8 @@ class Classifier:
         print("Total accuracy : ", str(accuracy))
         return accuracy
 
-    def test(self, pca=False):
-        self.x_test = prep.preprocess(self.data_test)
+    def test(self, pca = False, change_ages = False):
+        self.x_test=prep.preprocess(self.data_test, change_ages)
         if pca:
             self.pca.transform(self.x_test)
         self.y_test = self.clf.predict(self.x_test)
