@@ -246,7 +246,7 @@ class Classifier:
     def KNN(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        self.clf = KNeighborsClassifier(n_neighbors=3)
+        self.clf = KNeighborsClassifier(n_neighbors=5)
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
