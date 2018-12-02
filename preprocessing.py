@@ -35,6 +35,7 @@ def fare_NaN(data):
         data.loc[data['Fare'].isnull(), 'Fare'] = round(data['Fare'].mean(), 1)
 
 def age_classes(data):
+<<<<<<< HEAD
     data_bis = data.copy()
     data_bis.loc[data['Age'] > 80, 'Age'] = 0
     data_bis.loc[data['Age'] <= 80, 'Age'] = 1
@@ -44,6 +45,16 @@ def age_classes(data):
     data_bis.loc[data['Age'] <= 15, 'Age'] = 5
     data_bis.loc[data['Age'] <= 5, 'Age'] = 6
     data['Age']=data_bis['Age']
+=======
+    data.loc[data['Age'] > 80, 'Age'] = 0
+    data.loc[data['Age'] <= 80, 'Age'] = 1
+    data.loc[data['Age'] <= 60, 'Age'] = 2
+    data.loc[data['Age'] <= 45, 'Age'] = 3
+    data.loc[data['Age'] <= 30, 'Age'] = 4
+    data.loc[data['Age'] <= 15, 'Age'] = 5
+    data.loc[data['Age'] <= 5, 'Age'] = 6
+
+>>>>>>> 0d1cfc033ee89ee1ae70432af3b3ab70f6012c05
     
     
 def preprocess(data, change_ages = False):
