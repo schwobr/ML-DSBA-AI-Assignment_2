@@ -234,6 +234,7 @@ class Classifier:
             total_correct += correct
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
+        print(accuracy)
         return accuracy
 
     def KNN(self):

@@ -147,20 +147,26 @@ def test_LDA():
 def test_SVM():
     classifier = Classifier()
     classifier.load_data_panda()
-    classifier.preprocessing()
-    classifier.SVM()
     classifier.load_test()
+    classifier.preprocessing(change_ages=True)
+    classifier.apply_pca()
+    classifier.SVM()
+    classifier.test()
     classifier.generate_submission(submission_file="Data/submission_svm.csv")
 
 
 test_SVM()
 
+
 def test_KNN():
     classifier = Classifier()
     classifier.load_data_panda()
-    classifier.preprocessing()
-    classifier.KNN()
     classifier.load_test()
+    classifier.preprocessing(change_ages=True)
+    classifier.apply_pca()
+    classifier.KNN()
+    classifier.test()
     classifier.generate_submission(submission_file="Data/submission_knn.csv")
 
-#  test_KNN()
+
+test_KNN()
