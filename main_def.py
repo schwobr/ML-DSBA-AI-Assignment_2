@@ -6,6 +6,7 @@ from classify import classify
 import preprocessing as prep
 import preprocessing_features as prep_features
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
@@ -15,6 +16,7 @@ from sklearn import svm
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2, mutual_info_classif
+
 
 class Classifier:
     def __init__(self):
@@ -82,7 +84,7 @@ class Classifier:
 
     def apply_pca(self):
         self.pca.fit_transform(self.x)
-        
+
     def apply_feat_sel(self):
         self.feat_sel.fit_transform(self.x, self.y)
 
@@ -115,7 +117,7 @@ class Classifier:
     def preprocessing_features(self):
         self.x, self.x_header = prep_features.preprocess(self.x, self.x_header)
 
-    def preprocessing(self, change_ages = False):
+    def preprocessing(self, change_ages=False):
         self.x = prep.preprocess(self.data, change_ages)
 
     def decision_tree(self, D):
@@ -242,7 +244,6 @@ class Classifier:
         print(accuracy)
         return accuracy
 
-
     def KNN(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
@@ -266,8 +267,31 @@ class Classifier:
         print("Total accuracy : ", str(accuracy))
         return accuracy
 
-    def test(self, pca = False, feat_sel= False, change_ages = False):
-        self.x_test=prep.preprocess(self.data_test, change_ages)
+    def random_forest(self):
+        total_instances = 0  # Variable that will store the total instances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted instances
+        self.clf = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=0)
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print("Total accuracy : ", str(accuracy))
+        return accuracy
+
+    def test(self, pca=False, feat_sel=False, change_ages=False):
+        self.x_test = prep.preprocess(self.data_test, change_ages)
         if pca:
             self.pca.transform(self.x_test)
         if feat_sel:

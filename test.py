@@ -155,7 +155,7 @@ def test_SVM():
     classifier.generate_submission(submission_file="Data/submission_svm.csv")
 
 
-test_SVM()
+#  test_SVM()
 
 
 def test_KNN():
@@ -169,4 +169,15 @@ def test_KNN():
     classifier.generate_submission(submission_file="Data/submission_knn.csv")
 
 
-test_KNN()
+#  test_KNN()
+
+def test_random_forest():
+    classifier = Classifier()
+    classifier.load_data_panda()
+    classifier.load_test()
+    classifier.preprocessing(change_ages=True)
+    classifier.random_forest()
+    classifier.test()
+    classifier.generate_submission(submission_file="Data/submission_random_forest.csv")
+
+test_random_forest()
