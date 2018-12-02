@@ -149,7 +149,18 @@ def test_SVM():
     classifier.load_data_panda()
     classifier.preprocessing()
     classifier.SVM()
-    classifier.generate_submission()
+    classifier.load_test()
+    classifier.generate_submission(submission_file="Data/submission_svm.csv")
 
 
 test_SVM()
+
+def test_KNN():
+    classifier = Classifier()
+    classifier.load_data_panda()
+    classifier.preprocessing()
+    classifier.KNN()
+    classifier.load_test()
+    classifier.generate_submission(submission_file="Data/submission_knn.csv")
+
+#  test_KNN()

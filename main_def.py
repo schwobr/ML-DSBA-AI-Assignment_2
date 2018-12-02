@@ -12,6 +12,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.decomposition import PCA
 import pandas as pd
 from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
 
 
 class Classifier:
@@ -25,7 +26,7 @@ class Classifier:
         self.data = None
         self.data_test = None
         self.clf = None
-        self.pca = PCA(n_components = 0.85, svd_solver = "full")
+        self.pca = PCA(n_components=0.85, svd_solver="full")
 
     def load_data(self, file="Data/train.csv"):
         """
@@ -53,7 +54,6 @@ class Classifier:
         self.y = y
         self.x_header = x_header
 
-
     def load_data_panda(self, file="Data/train.csv"):
         """
         read the data from a file and return it using panda
@@ -67,20 +67,20 @@ class Classifier:
         self.x_header = list(data)
         self.x = data.values
         self.y = y.values
-        
+
     def load_test(self, file="Data/test.csv"):
         """
         read the test data from a file and return it using panda
         :param file: path to csv
         :param display: Bool. False by default. Set to true to print the data
         :return: data
-        """    
+        """
         self.data_test = pd.read_csv(file, index_col="PassengerId")
         self.x_test = self.data_test.values
-    
+
     def apply_pca(self):
         self.pca.fit_transform(self.x)
-    
+
     def basic_classifier(self):
         """
         basic classifier given as example in the Assigment_2 zip file
@@ -165,9 +165,10 @@ class Classifier:
            early_stopping=True, validation_fraction=0.1, n_iter_no_change=5):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        self.clf = MLPClassifier(hidden_layer_sizes=hl_sizes, activation=activation, solver=solver, learning_rate_init=lr,
-                            learning_rate=lr_evol, max_iter=max_iter, tol=tol, early_stopping=early_stopping,
-                            validation_fraction=validation_fraction, n_iter_no_change=n_iter_no_change)
+        self.clf = MLPClassifier(hidden_layer_sizes=hl_sizes, activation=activation, solver=solver,
+                                 learning_rate_init=lr,
+                                 learning_rate=lr_evol, max_iter=max_iter, tol=tol, early_stopping=early_stopping,
+                                 validation_fraction=validation_fraction, n_iter_no_change=n_iter_no_change)
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
@@ -211,7 +212,6 @@ class Classifier:
             totalInstances += test_labels.size
         accuracy = totalCorrect / float(totalInstances)
         print("Total accuracy : ", str(accuracy))
-        self.clf = clf
         return accuracy
 
     def SVM(self):
@@ -235,7 +235,30 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         return accuracy
-      
+
+    def KNN(self):
+        total_instances = 0  # Variable that will store the total instances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted instances
+        self.clf = KNeighborsClassifier(n_neighbors=3)
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print("Total accuracy : ", str(accuracy))
+        return accuracy
+
     def test(self, pca = False, change_ages = False):
         self.x_test=prep.preprocess(self.data_test, change_ages)
         if pca:
