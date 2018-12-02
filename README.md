@@ -56,3 +56,23 @@ python3 test.py -m test_LDA
 ```
 python3 test.py -m test_SVM
 ```
+
+## KNN
+```
+python3 test.py -m test_KNN
+```
+
+## Random Forest
+```
+python3 test.py -m test_random_forest
+```
+
+## Quadri Discriminant
+```
+python3 test.py -m test_quadri_discriminant
+```
+
+## Gaussian Process
+```
+python3 test.py -m test_gaussian_process
+```

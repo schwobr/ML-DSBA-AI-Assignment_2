@@ -154,7 +154,7 @@ def test_SVM():
     classifier.generate_submission(submission_file="Data/submission_svm_nsplits-5.csv")
 
 
-test_SVM()
+#  test_SVM()
 
 
 def test_KNN():
