@@ -1,9 +1,9 @@
 # ML-DSBA-AI-Assignment_2
 
-Assignment propositon for Foundation of Machine Learning courses at CentraleSupélec.  
+Assignment proposition for Foundation of Machine Learning courses at CentraleSupélec.  
 
 Proposed by Robin Schwob and Paul Asquin.  
-This assigment is based on the Kaggle contest : [www.kaggle.com/c/titanic](https://www.kaggle.com/c/titanic)  
+This assignment is based on the Kaggle contest : [www.kaggle.com/c/titanic](https://www.kaggle.com/c/titanic)  
 
 # Run the models
 It's possible to run each model independently bu using the test implemented in test.py. Run the following instructions to execute specific models.  
@@ -65,14 +65,4 @@ python3 test.py -m test_KNN
 ## Random Forest
 ```
 python3 test.py -m test_random_forest
-```
-
-## Quadri Discriminant
-```
-python3 test.py -m test_quadri_discriminant
-```
-
-## Gaussian Process
-```
-python3 test.py -m test_gaussian_process
 ```
