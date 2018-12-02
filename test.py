@@ -154,7 +154,7 @@ def test_SVM():
     classifier.generate_submission(submission_file="Data/submission_svm.csv")
 
 
-#  test_SVM()
+test_SVM()
 
 
 def test_KNN():
