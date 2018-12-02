@@ -1,6 +1,6 @@
 import numpy as np
 
-def classify(trainSet, trainLabels, testSet):
+def classify(testSet):
 	
 	predictedLabels = np.zeros(testSet.shape[0])
 	
