@@ -20,6 +20,7 @@ class Classifier:
         self.y = None
         self.x_header = None
         self.data = None
+        self.clf = None
 
     def load_data(self, file="Data/train.csv"):
         """
@@ -114,6 +115,7 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print('Total Accuracy: ' + str(accuracy))
+        self.clf = clf
         return accuracy
 
     def ada_boost(self, D):
@@ -138,6 +140,7 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print('Total Accuracy: ' + str(accuracy))
+        self.clf = clf
         return accuracy
 
     def NN(self, hl_sizes=(100,), activation='relu', solver='sgd', lr=0.01, lr_evol='constant', max_iter=200, tol=0.001,
@@ -165,6 +168,7 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print('Total Accuracy: ' + str(accuracy))
+        self.clf = clf
         return accuracy
 
     def LDA(self):
@@ -190,6 +194,8 @@ class Classifier:
             totalInstances += test_labels.size
         accuracy = totalCorrect / float(totalInstances)
         print("Total accuracy : ", str(accuracy))
+        self.clf = clf
+        return accuracy
 
     def SVM(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
@@ -212,3 +218,16 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print("Total accuracy : ", str(accuracy))
+        self.clf = clf
+        return accuracy
+
+    def generate_submission(self, test_file='Data/test.csv', submission_file='Data/submission.csv'):
+        if self.clf is None:
+            raise NameError("clf have to be computed before generating a submission")
+        test = pd.read_csv(test_file, index_col='PassengerId')
+        x_test = prep.preprocess(test)
+        y_test = self.clf.predict(x_test)
+        y_df = pd.DataFrame(data=y_test, columns=['Survived'], index=test.index)
+        print(y_df.head(20))
+        y_df.to_csv(path_or_buf=submission_file)
+
