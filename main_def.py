@@ -17,6 +17,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2, mutual_info_classif
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
 
 
 class Classifier:
@@ -313,6 +315,31 @@ class Classifier:
         accuracy = total_correct / float(total_instances)
         print("Total accuracy : ", str(accuracy))
         return accuracy
+
+    def gaussian_process(self):
+        total_instances = 0  # Variable that will store the total instances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted instances
+        kernel = 1.0 * RBF(1.0)
+        self.clf = GaussianProcessClassifier(kernel=kernel, random_state=0)
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print("Total accuracy : ", str(accuracy))
+        return accuracy
+
 
 
     def test(self, pca=False, feat_sel=False, change_ages=False):
