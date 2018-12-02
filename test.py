@@ -152,7 +152,7 @@ def test_SVM():
     classifier.apply_pca()
     classifier.SVM()
     classifier.test()
-    classifier.generate_submission(submission_file="Data/submission_svm.csv")
+    classifier.generate_submission(submission_file="Data/submission_svm_nsplits-5.csv")
 
 
 test_SVM()
@@ -169,4 +169,40 @@ def test_KNN():
     classifier.generate_submission(submission_file="Data/submission_knn.csv")
 
 
-test_KNN()
+#  test_KNN()
+
+def test_random_forest():
+    classifier = Classifier()
+    classifier.load_data_panda()
+    classifier.load_test()
+    classifier.preprocessing(change_ages=True)
+    classifier.random_forest()
+    classifier.test()
+    classifier.generate_submission(submission_file="Data/submission_random_forest_2.csv")
+
+
+#   test_random_forest()
+
+def test_quadri_discriminant():
+    classifier = Classifier()
+    classifier.load_data_panda()
+    classifier.load_test()
+    classifier.preprocessing(change_ages=True)
+    classifier.quadri_discriminant()
+    classifier.test()
+    classifier.generate_submission(submission_file="Data/submission_quadri_discriminant.csv")
+
+
+#  test_quadri_discriminant()
+
+def test_gaussian_process():
+    classifier = Classifier()
+    classifier.load_data_panda()
+    classifier.load_test()
+    classifier.preprocessing(change_ages=True)
+    classifier.gaussian_process()
+    classifier.test()
+    classifier.generate_submission(submission_file="Data/submission_gaussian_process_nsplit.csv")
+
+
+#  test_gaussian_process()
