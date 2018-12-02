@@ -6,10 +6,15 @@ Proposed by Robin Schwob and Paul Asquin.
 This assigment is based on the Kaggle contest : [www.kaggle.com/c/titanic](https://www.kaggle.com/c/titanic)  
 
 # Run the models
-It's possible to run each model independently bu using the test implemented in test.py. Run the following instrucions to execute specific models.  
-You can also test the load data function by running:  
+It's possible to run each model independently bu using the test implemented in test.py. Run the following instructions to execute specific models.  
+You can also test the load_data function by running:  
 ```
 python3 test.py -m test_load_data
+```
+
+And you can test the load_data_panda function with:
+```
+python3 test.py -m test_load_data_panda
 ```
 
 ## Basic classifier
@@ -40,4 +45,14 @@ python3 test.py -m test_NN_1
 *NN test for higher hidden layer sizes (from 200 to 400)*
 ```
 python3 test.py -m test_NN_2
+```
+
+## LDA
+```
+python3 test.py -m test_LDA
+```
+
+## SVM
+```
+python3 test.py -m test_SVM
 ```
