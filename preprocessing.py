@@ -34,12 +34,25 @@ def fare_NaN(data):
     if data.isna().any()['Fare']:
         data.loc[data['Fare'].isnull(), 'Fare'] = round(data['Fare'].mean(), 1)
 
-
-def preprocess(data):
-    data.drop(['Ticket', 'Cabin'], axis=1, inplace=True)
+def age_classes(data):
+    data_bis = data.copy()
+    data_bis.loc[data['Age'] > 80, 'Age'] = 0
+    data_bis.loc[data['Age'] <= 80, 'Age'] = 1
+    data_bis.loc[data['Age'] <= 60, 'Age'] = 2
+    data_bis.loc[data['Age'] <= 45, 'Age'] = 3
+    data_bis.loc[data['Age'] <= 30, 'Age'] = 4
+    data_bis.loc[data['Age'] <= 15, 'Age'] = 5
+    data_bis.loc[data['Age'] <= 5, 'Age'] = 6
+    data['Age']=data_bis['Age']
+    
+    
+def preprocess(data, change_ages = False):
+    data.drop(['Ticket', 'Cabin', 'Fare'], axis=1, inplace=True)
     change_gender(data)
     change_embarked(data)
     change_name(data)
     missing_ages(data)
-    fare_NaN(data)
+    if change_ages:
+        age_classes(data)
+    #fare_NaN(data)
     return preprocessing.scale(data.values)
