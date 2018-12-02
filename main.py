@@ -4,7 +4,6 @@ from sklearn import model_selection
 import csv
 from classify import classify
 import preprocessing as prep
-import preprocessing_features as prep_features
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
@@ -116,9 +115,6 @@ class Classifier:
             total_correct += correct
             total_instances += test_labels.size
         print('Total Accuracy: ' + str(total_correct / float(total_instances)))
-
-    def preprocessing_features(self):
-        self.x, self.x_header = prep_features.preprocess(self.x, self.x_header)
 
     def preprocessing(self, change_ages=False):
         self.x = prep.preprocess(self.data, change_ages)
@@ -339,8 +335,6 @@ class Classifier:
         accuracy = total_correct / float(total_instances)
         print("Total accuracy : ", str(accuracy))
         return accuracy
-
-
 
     def test(self, pca=False, feat_sel=False, change_ages=False):
         self.x_test = prep.preprocess(self.data_test, change_ages)
