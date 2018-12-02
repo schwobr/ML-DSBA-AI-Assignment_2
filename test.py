@@ -149,6 +149,7 @@ def test_SVM():
     classifier.load_data_panda()
     classifier.preprocessing()
     classifier.SVM()
+    classifier.generate_submission()
 
 
 test_SVM()

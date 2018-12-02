@@ -211,6 +211,8 @@ class Classifier:
             totalInstances += test_labels.size
         accuracy = totalCorrect / float(totalInstances)
         print("Total accuracy : ", str(accuracy))
+        self.clf = clf
+        return accuracy
 
     def SVM(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
@@ -232,11 +234,17 @@ class Classifier:
             total_correct += correct
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
-        print("Total accuracy : ", str(accuracy))
-
+        return accuracy
+      
     def test(self, pca = False):
         self.x_test=prep.preprocess(self.data_test)
         if pca:
             self.pca.transform(self.x_test)
         self.y_test = self.clf.predict(self.x_test)
-        
+
+    def generate_submission(self, submission_file='Data/submission.csv'):
+        if self.clf is None:
+            raise NameError("clf have to be computed before generating a submission")
+        y_df = pd.DataFrame(data=self.y_test, columns=['Survived'], index=self.data_test.index)
+        print(y_df.head(20))
+        y_df.to_csv(path_or_buf=submission_file)
