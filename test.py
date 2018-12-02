@@ -1,6 +1,5 @@
-from main_def import *
+from main import *
 import matplotlib.pyplot as plt
-import sys
 
 
 def test_load_data():
