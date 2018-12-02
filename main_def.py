@@ -9,6 +9,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.decomposition import PCA
 import pandas as pd
 from sklearn import svm
 from sklearn.neighbors import KNeighborsClassifier
@@ -20,8 +21,12 @@ class Classifier:
         self.x = None
         self.y = None
         self.x_header = None
+        self.x_test = None
+        self.y_test = None
         self.data = None
+        self.data_test = None
         self.clf = None
+        self.pca = PCA(n_components=0.85, svd_solver="full")
 
     def load_data(self, file="Data/train.csv"):
         """
@@ -51,16 +56,30 @@ class Classifier:
 
     def load_data_panda(self, file="Data/train.csv"):
         """
-            read the data from a file and return it using panda
-            :param file: path to csv
-            :param display: Bool. False by default. Set to true to print the data
-            :return: data
-            """
+        read the data from a file and return it using panda
+        :param file: path to csv
+        :param display: Bool. False by default. Set to true to print the data
+        :return: data
+        """
         data = pd.read_csv(file, index_col='PassengerId')  # Load in the csv file
         y = data['Survived']
         self.data = data.drop('Survived', axis=1)
+        self.x_header = list(data)
         self.x = data.values
         self.y = y.values
+
+    def load_test(self, file="Data/test.csv"):
+        """
+        read the test data from a file and return it using panda
+        :param file: path to csv
+        :param display: Bool. False by default. Set to true to print the data
+        :return: data
+        """
+        self.data_test = pd.read_csv(file, index_col="PassengerId")
+        self.x_test = self.data_test.values
+
+    def apply_pca(self):
+        self.pca.fit_transform(self.x)
 
     def basic_classifier(self):
         """
@@ -97,15 +116,15 @@ class Classifier:
     def decision_tree(self, D):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        clf = DecisionTreeClassifier(max_depth=D)
+        self.clf = DecisionTreeClassifier(max_depth=D)
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
             train_labels = self.y[trainIndex]
             test_labels = self.y[testIndex]
 
-            clf.fit(train_set, train_labels)
-            predicted_labels = clf.predict(test_set)
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
 
             correct = 0
             for i in range(test_set.shape[0]):
@@ -116,21 +135,20 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print('Total Accuracy: ' + str(accuracy))
-        self.clf = clf
         return accuracy
 
     def ada_boost(self, D):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=D))
+        self.clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=D))
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
             train_labels = self.y[trainIndex]
             test_labels = self.y[testIndex]
 
-            clf.fit(train_set, train_labels)
-            predicted_labels = clf.predict(test_set)
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
 
             correct = 0
             for i in range(test_set.shape[0]):
@@ -141,24 +159,24 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print('Total Accuracy: ' + str(accuracy))
-        self.clf = clf
         return accuracy
 
     def NN(self, hl_sizes=(100,), activation='relu', solver='sgd', lr=0.01, lr_evol='constant', max_iter=200, tol=0.001,
            early_stopping=True, validation_fraction=0.1, n_iter_no_change=5):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        clf = MLPClassifier(hidden_layer_sizes=hl_sizes, activation=activation, solver=solver, learning_rate_init=lr,
-                            learning_rate=lr_evol, max_iter=max_iter, tol=tol, early_stopping=early_stopping,
-                            validation_fraction=validation_fraction, n_iter_no_change=n_iter_no_change)
+        self.clf = MLPClassifier(hidden_layer_sizes=hl_sizes, activation=activation, solver=solver,
+                                 learning_rate_init=lr,
+                                 learning_rate=lr_evol, max_iter=max_iter, tol=tol, early_stopping=early_stopping,
+                                 validation_fraction=validation_fraction, n_iter_no_change=n_iter_no_change)
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
             train_labels = self.y[trainIndex]
             test_labels = self.y[testIndex]
 
-            clf.fit(train_set, train_labels)
-            predicted_labels = clf.predict(test_set)
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
 
             correct = 0
             for i in range(test_set.shape[0]):
@@ -169,22 +187,21 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print('Total Accuracy: ' + str(accuracy))
-        self.clf = clf
         return accuracy
 
     def LDA(self):
         totalInstances = 0  # Variable that will store the total intances that will be tested
         totalCorrect = 0  # Variable that will store the correctly predicted intances
-        clf = LDA(solver='eigen')
+        self.clf = LDA(solver='eigen')
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
             train_labels = self.y[trainIndex]
             test_labels = self.y[testIndex]
 
-            clf.fit(train_set, train_labels)
-            clf.transform(test_set)
-            predicted_labels = clf.predict(test_set)
+            self.clf.fit(train_set, train_labels)
+            self.clf.transform(test_set)
+            predicted_labels = self.clf.predict(test_set)
 
             correct = 0
             for i in range(test_set.shape[0]):
@@ -195,20 +212,19 @@ class Classifier:
             totalInstances += test_labels.size
         accuracy = totalCorrect / float(totalInstances)
         print("Total accuracy : ", str(accuracy))
-        self.clf = clf
         return accuracy
 
     def SVM(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        clf = svm.SVC(gamma='scale')
+        self.clf = svm.SVC(gamma='scale')
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
             train_labels = self.y[trainIndex]
             test_labels = self.y[testIndex]
-            clf.fit(train_set, train_labels)
-            predicted_labels = clf.predict(test_set)
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
 
             correct = 0
             for i in range(test_set.shape[0]):
@@ -218,21 +234,19 @@ class Classifier:
             total_correct += correct
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
-        print("Total accuracy : ", str(accuracy))
-        self.clf = clf
         return accuracy
 
     def KNN(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
-        clf = KNeighborsClassifier(n_neighbors=3)
+        self.clf = KNeighborsClassifier(n_neighbors=3)
         for trainIndex, testIndex in self.kf.split(self.x):
             train_set = self.x[trainIndex]
             test_set = self.x[testIndex]
             train_labels = self.y[trainIndex]
             test_labels = self.y[testIndex]
-            clf.fit(train_set, train_labels)
-            predicted_labels = clf.predict(test_set)
+            self.clf.fit(train_set, train_labels)
+            predicted_labels = self.clf.predict(test_set)
 
             correct = 0
             for i in range(test_set.shape[0]):
@@ -243,17 +257,17 @@ class Classifier:
             total_instances += test_labels.size
         accuracy = total_correct / float(total_instances)
         print("Total accuracy : ", str(accuracy))
-        self.clf = clf
         return accuracy
 
+    def test(self, pca=False):
+        self.x_test = prep.preprocess(self.data_test)
+        if pca:
+            self.pca.transform(self.x_test)
+        self.y_test = self.clf.predict(self.x_test)
 
-    def generate_submission(self, test_file='Data/test.csv', submission_file='Data/submission.csv'):
+    def generate_submission(self, submission_file='Data/submission.csv'):
         if self.clf is None:
             raise NameError("clf have to be computed before generating a submission")
-        test = pd.read_csv(test_file, index_col='PassengerId')
-        x_test = prep.preprocess(test)
-        y_test = self.clf.predict(x_test)
-        y_df = pd.DataFrame(data=y_test, columns=['Survived'], index=test.index)
+        y_df = pd.DataFrame(data=self.y_test, columns=['Survived'], index=self.data_test.index)
         print(y_df.head(20))
         y_df.to_csv(path_or_buf=submission_file)
-
