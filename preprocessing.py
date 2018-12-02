@@ -18,6 +18,7 @@ def change_embarked(data):
 def change_name(data):
     l = [s for l in data['Name'].str.split(' ') for s in l if ('.' in s and 'L.' not in s)]
     data['Name'] = l
+    l = list(set(l))
     n = data.index.values[0]
     for i in range(n, data['Name'].size + n):
         for j in range(len(l)):
@@ -47,9 +48,9 @@ def age_classes(data):
     
     
 def preprocess(data, change_ages = False):
-    data.drop(['Ticket', 'Cabin', 'Fare'], axis=1, inplace=True)
+    data.drop(['Ticket', 'Cabin', 'Fare', 'Embarked'], axis=1, inplace=True)
     change_gender(data)
-    change_embarked(data)
+    #change_embarked(data)
     change_name(data)
     missing_ages(data)
     if change_ages:

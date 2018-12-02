@@ -13,7 +13,8 @@ from sklearn.decomposition import PCA
 import pandas as pd
 from sklearn import svm
 from sklearn.neighbors import KNeighborsClassifier
-
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2, mutual_info_classif
 
 class Classifier:
     def __init__(self):
@@ -27,6 +28,7 @@ class Classifier:
         self.data_test = None
         self.clf = None
         self.pca = PCA(n_components=0.85, svd_solver="full")
+        self.feat_sel = SelectKBest(mutual_info_classif, k=4)
 
     def load_data(self, file="Data/train.csv"):
         """
@@ -80,6 +82,9 @@ class Classifier:
 
     def apply_pca(self):
         self.pca.fit_transform(self.x)
+        
+    def apply_feat_sel(self):
+        self.feat_sel.fit_transform(self.x, self.y)
 
     def basic_classifier(self):
         """
@@ -261,10 +266,12 @@ class Classifier:
         print("Total accuracy : ", str(accuracy))
         return accuracy
 
-    def test(self, pca = False, change_ages = False):
+    def test(self, pca = False, feat_sel= False, change_ages = False):
         self.x_test=prep.preprocess(self.data_test, change_ages)
         if pca:
             self.pca.transform(self.x_test)
+        if feat_sel:
+            self.feat_sel.transform(self.x_test)
         self.y_test = self.clf.predict(self.x_test)
 
     def generate_submission(self, submission_file='Data/submission.csv'):
