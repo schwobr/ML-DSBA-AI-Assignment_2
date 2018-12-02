@@ -3,45 +3,45 @@ import pandas as pd
 from sklearn import preprocessing
 
 
-def deleteUseless(X, features):
-    i = getColumn(features, "PassengerId")
+def delete_useless(X, features):
+    i = get_column(features, "PassengerId")
     if i != -1:
         X = np.delete(X, i, 1)
         features = np.delete(features, i)
-    i = getColumn(features, "Ticket")
+    i = get_column(features, "Ticket")
     if i != -1:
         X = np.delete(X, i, 1)
         features = np.delete(features, i)
-    i = getColumn(features, "Cabin")
+    i = get_column(features, "Cabin")
     if i != -1:
         X = np.delete(X, i, 1)
         features = np.delete(features, i)
-    return (X, features)
+    return X, features
 
 
-def getColumn(features, feature):
+def get_column(features, feature):
     for i in range(len(features)):
         if features[i] == feature:
             return i
     return -1
 
 
-def changeGender(X, features):
-    j = getColumn(features, "Sex")
+def change_gender(X, features):
+    j = get_column(features, "Sex")
     if j != -1:
         for i in range(X.shape[0]):
             X[i, j] = 0 if X[i, j] == "male" else 1
 
 
-def ChangeEmbarked(X, features):
-    j = getColumn(features, "Embarked")
+def change_embarked(X, features):
+    j = get_column(features, "Embarked")
     if j != -1:
         for i in range(X.shape[0]):
             X[i, j] = 0 if X[i, j] == "C" else 1 if X[i, j] == "Q" else 2
 
 
-def ChangeName(X, features):
-    j = getColumn(features, "Name")
+def change_name(X, features):
+    j = get_column(features, "Name")
     if j != -1:
         titles = np.copy(X[:, j])
         for i in range(titles.shape[0]):
@@ -62,8 +62,8 @@ def ChangeName(X, features):
         features[j] = "Title"
 
 
-def missingAges(X, features):
-    j = getColumn(features, "Age")
+def missing_ages(X, features):
+    j = get_column(features, "Age")
     mean = np.mean(np.array([float(x) for x in X[:, j] if x != '']))
     mean = round(mean, 1)
     for i in range(X.shape[0]):
@@ -72,9 +72,9 @@ def missingAges(X, features):
 
 
 def preprocess(X, features):
-    X, features = deleteUseless(X, features)
-    changeGender(X, features)
-    ChangeEmbarked(X, features)
-    ChangeName(X, features)
-    missingAges(X, features)
-    return (preprocessing.scale(np.array(X, dtype='float64')), features)
+    X, features = delete_useless(X, features)
+    change_gender(X, features)
+    change_embarked(X, features)
+    change_name(X, features)
+    missing_ages(X, features)
+    return preprocessing.scale(np.array(X, dtype='float64')), features
