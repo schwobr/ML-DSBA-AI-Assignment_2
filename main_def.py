@@ -237,6 +237,7 @@ class Classifier:
         print(accuracy)
         return accuracy
 
+
     def KNN(self):
         total_instances = 0  # Variable that will store the total instances that will be tested
         total_correct = 0  # Variable that will store the correctly predicted instances
