@@ -11,6 +11,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 import pandas as pd
 from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
 
 
 class Classifier:
@@ -220,6 +221,31 @@ class Classifier:
         print("Total accuracy : ", str(accuracy))
         self.clf = clf
         return accuracy
+
+    def KNN(self):
+        total_instances = 0  # Variable that will store the total instances that will be tested
+        total_correct = 0  # Variable that will store the correctly predicted instances
+        clf = KNeighborsClassifier(n_neighbors=3)
+        for trainIndex, testIndex in self.kf.split(self.x):
+            train_set = self.x[trainIndex]
+            test_set = self.x[testIndex]
+            train_labels = self.y[trainIndex]
+            test_labels = self.y[testIndex]
+            clf.fit(train_set, train_labels)
+            predicted_labels = clf.predict(test_set)
+
+            correct = 0
+            for i in range(test_set.shape[0]):
+                if predicted_labels[i] == test_labels[i]:
+                    correct += 1
+
+            total_correct += correct
+            total_instances += test_labels.size
+        accuracy = total_correct / float(total_instances)
+        print("Total accuracy : ", str(accuracy))
+        self.clf = clf
+        return accuracy
+
 
     def generate_submission(self, test_file='Data/test.csv', submission_file='Data/submission.csv'):
         if self.clf is None:
